@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Networks & Internet — Reviewer Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #111627;
+    --bg3: #1a2035;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #e8eaf2;
+    --text2: #8a90aa;
+    --text3: #5a607a;
+    --accent: #4f8ef7;
+    --accent2: #7c5af7;
+    --correct: #2eb87a;
+    --wrong: #e2574a;
+    --gold: #f5a623;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 16px; color: #fff;
+  }
+  .header-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.3px;
+  }
+  .header-sub { font-size: 12px; color: var(--text3); margin-top: 1px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* SETUP SCREEN */
+  #setup-screen {
+    max-width: 680px;
+    margin: 60px auto;
+    padding: 0 24px;
+  }
+  .setup-hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .setup-hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #e8eaf2 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .setup-hero p { color: var(--text2); font-size: 15px; line-height: 1.6; }
+  .setup-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-bottom: 16px;
+  }
+  .setup-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 14px;
+  }
+  .preset-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .preset-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 14px 8px;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: center;
+  }
+  .preset-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .preset-btn.active {
+    background: rgba(79,142,247,0.12);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .preset-btn .preset-num { display: block; font-size: 22px; }
+  .preset-btn .preset-lbl { display: block; font-size: 11px; color: var(--text3); margin-top: 2px; font-family: 'IBM Plex Mono', monospace; font-weight: 400; }
+  .preset-btn.active .preset-lbl { color: var(--accent); opacity: 0.7; }
+
+  .start-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: var(--radius);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 18px;
+    cursor: pointer;
+    transition: opacity 0.18s, transform 0.12s;
+    letter-spacing: 0.3px;
+    margin-top: 8px;
+  }
+  .start-btn:hover { opacity: 0.9; }
+  .start-btn:active { transform: scale(0.99); }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .stat-chip {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .stat-chip .n { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 22px; color: var(--accent); }
+  .stat-chip .l { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* QUIZ SCREEN */
+  #quiz-screen { display: none; max-width: 760px; margin: 0 auto; padding: 32px 24px; }
+
+  .quiz-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    gap: 16px;
+  }
+  .progress-wrap { flex: 1; }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text3);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 6px;
+  }
+  .progress-bar-bg {
+    height: 4px;
+    background: var(--bg3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .score-badge {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .score-badge .sc { color: var(--correct); font-weight: 500; }
+  .score-badge .sw { color: var(--wrong); font-weight: 500; }
+
+  .article-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(79,142,247,0.1);
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+  }
+  .priority-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .priority-dot.high { background: var(--gold); }
+
+  .question-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-bottom: 16px;
+  }
+  .question-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .question-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 560px) { .options-grid { grid-template-columns: 1fr; } }
+
+  .option-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.16s;
+    text-align: left;
+    line-height: 1.4;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--border2);
+    background: rgba(255,255,255,0.04);
+  }
+  .option-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    background: var(--bg2);
+    border-radius: 4px;
+    padding: 1px 6px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.16s;
+  }
+  .option-btn.correct {
+    background: rgba(46,184,122,0.12);
+    border-color: var(--correct);
+    color: #fff;
+  }
+  .option-btn.correct .option-label {
+    background: var(--correct);
+    color: #fff;
+  }
+  .option-btn.wrong {
+    background: rgba(226,87,74,0.12);
+    border-color: var(--wrong);
+    color: var(--wrong);
+  }
+  .option-btn.wrong .option-label {
+    background: var(--wrong);
+    color: #fff;
+  }
+  .option-btn.reveal {
+    border-color: var(--correct);
+    color: var(--correct);
+    opacity: 0.6;
+  }
+  .option-btn:disabled { cursor: default; }
+
+  .feedback-bar {
+    border-radius: var(--radius-sm);
+    padding: 12px 18px;
+    font-size: 13px;
+    line-height: 1.5;
+    display: none;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .feedback-bar.show { display: flex; }
+  .feedback-bar.correct-fb { background: rgba(46,184,122,0.12); border: 1px solid rgba(46,184,122,0.3); color: #5dd4a0; }
+  .feedback-bar.wrong-fb { background: rgba(226,87,74,0.1); border: 1px solid rgba(226,87,74,0.3); color: #f08070; }
+  .feedback-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .feedback-text { }
+  .feedback-text strong { font-weight: 500; display: block; margin-bottom: 2px; }
+
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  .nav-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 22px;
+    cursor: pointer;
+    transition: all 0.16s;
+  }
+  .nav-btn:hover { border-color: var(--border2); color: var(--text); }
+  .nav-btn.primary {
+    background: rgba(79,142,247,0.1);
+    border-color: rgba(79,142,247,0.4);
+    color: var(--accent);
+  }
+  .nav-btn.primary:hover { background: rgba(79,142,247,0.2); }
+
+  /* RESULTS SCREEN */
+  #results-screen { display: none; max-width: 680px; margin: 0 auto; padding: 48px 24px; }
+  .results-hero { text-align: center; margin-bottom: 40px; }
+  .score-ring {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    position: relative;
+    background: var(--bg3);
+    border: 3px solid var(--border);
+  }
+  .score-ring::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent) var(--pct, 0%), transparent 0%);
+    z-index: -1;
+  }
+  .score-ring-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .score-ring-lbl { font-size: 11px; color: var(--text3); font-family: 'IBM Plex Mono', monospace; }
+  .results-hero h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .results-hero p { color: var(--text2); font-size: 15px; }
+  .results-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .results-actions { display: flex; gap: 10px; }
+  .results-actions button {
+    flex: 1;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.16s;
+  }
+  .btn-primary-res {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    color: #fff;
+  }
+  .btn-secondary-res {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text2);
+  }
+  .btn-secondary-res:hover { border-color: var(--border2); color: var(--text); }
+
+  .review-section { margin-top: 32px; }
+  .review-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 14px;
+  }
+  .review-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .review-item.r-correct { border-left: 3px solid var(--correct); }
+  .review-item.r-wrong { border-left: 3px solid var(--wrong); }
+  .review-q { color: var(--text2); margin-bottom: 6px; line-height: 1.4; }
+  .review-your { font-size: 12px; color: var(--wrong); }
+  .review-ans { font-size: 12px; color: var(--correct); margin-top: 2px; }
+
+  /* SHUFFLE BUTTON */
+  .shuffle-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all 0.16s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .shuffle-btn:hover { border-color: var(--border2); color: var(--text); }
+  .shuffle-icon { font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo-mark">NQ</div>
+    <div>
+      <div class="header-title">Networks &amp; Internet</div>
+      <div class="header-sub">Additional Readings Reviewer</div>
+    </div>
+  </div>
+  <button class="shuffle-btn" id="global-shuffle-btn" onclick="handleGlobalShuffle()">
+    <span class="shuffle-icon">⇌</span> Shuffle
+  </button>
+</div>
+
+<!-- SETUP SCREEN -->
+<div id="setup-screen">
+  <div class="setup-hero">
+    <h1>Ready to Test<br>Your Knowledge?</h1>
+    <p>Covering IPv6, UDP, QUIC, WWW, TLS, PKI, cybercrime,<br>and more from your additional readings.</p>
+  </div>
+
+  <div class="setup-card">
+    <div class="setup-label">Question Pool</div>
+    <div class="preset-grid">
+      <button class="preset-btn" data-count="10" onclick="selectPreset(10)">
+        <span class="preset-num">10</span>
+        <span class="preset-lbl">quick</span>
+      </button>
+      <button class="preset-btn" data-count="15" onclick="selectPreset(15)">
+        <span class="preset-num">15</span>
+        <span class="preset-lbl">standard</span>
+      </button>
+      <button class="preset-btn" data-count="20" onclick="selectPreset(20)">
+        <span class="preset-num">20</span>
+        <span class="preset-lbl">extended</span>
+      </button>
+      <button class="preset-btn active" data-count="0" onclick="selectPreset(0)" id="max-btn">
+        <span class="preset-num" id="max-num">MAX</span>
+        <span class="preset-lbl">all questions</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-chip"><div class="n" id="stat-total">—</div><div class="l">total questions</div></div>
+    <div class="stat-chip"><div class="n" id="stat-articles">10</div><div class="l">articles covered</div></div>
+    <div class="stat-chip"><div class="n" id="stat-high">—</div><div class="l">high priority</div></div>
+  </div>
+
+  <br>
+  <button class="start-btn" onclick="startQuiz()">Begin Quiz →</button>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div id="quiz-screen">
+  <div class="quiz-topbar">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="q-counter">Question 1 of 10</span>
+        <span id="q-article"></span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="score-badge">
+      <span class="sc" id="live-correct">0</span> / <span class="sw" id="live-wrong">0</span>
+    </div>
+  </div>
+
+  <div id="article-tag-wrap"></div>
+
+  <div class="question-card">
+    <div class="question-num" id="q-num-label">QUESTION 01</div>
+    <div class="question-text" id="q-text">Loading...</div>
+  </div>
+
+  <div class="feedback-bar" id="feedback-bar">
+    <div class="feedback-icon" id="feedback-icon">✓</div>
+    <div class="feedback-text">
+      <strong id="feedback-title">Correct!</strong>
+      <span id="feedback-detail"></span>
+    </div>
+  </div>
+
+  <div class="options-grid" id="options-grid"></div>
+
+  <div class="nav-row">
+    <button class="nav-btn" onclick="exitToSetup()">← Exit</button>
+    <button class="nav-btn primary" id="next-btn" onclick="nextQuestion()" style="display:none">Next →</button>
+    <button class="nav-btn primary" id="finish-btn" onclick="showResults()" style="display:none">Finish →</button>
+  </div>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div id="results-screen">
+  <div class="results-hero">
+    <div class="score-ring" id="score-ring">
+      <div class="score-ring-num" id="res-pct">0%</div>
+      <div class="score-ring-lbl">score</div>
+    </div>
+    <h2 id="res-title">Quiz Complete!</h2>
+    <p id="res-subtitle">Here's how you did.</p>
+  </div>
+  <div class="results-stats">
+    <div class="stat-chip"><div class="n" style="color:var(--correct)" id="res-correct">0</div><div class="l">correct</div></div>
+    <div class="stat-chip"><div class="n" style="color:var(--wrong)" id="res-wrong">0</div><div class="l">incorrect</div></div>
+    <div class="stat-chip"><div class="n" id="res-total-q">0</div><div class="l">total</div></div>
+  </div>
+  <div class="results-actions">
+    <button class="btn-primary-res" onclick="retakeQuiz()">Retake Quiz</button>
+    <button class="btn-secondary-res" onclick="exitToSetup()">Change Settings</button>
+  </div>
+  <div class="review-section">
+    <div class="review-title">Question Review</div>
+    <div id="review-list"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// QUESTION BANK
+// priority: 'high' = new/yellow articles; 'low' = repeated/colored articles
+// ============================================================
+const ALL_QUESTIONS = [
+
+  // ===== AR 9: IPv6 (new article — HIGH PRIORITY) =====
+  {
+    article: "AR 9 — IPv6",
+    priority: "high",
+    q: "When was the first definition of IPv6 introduced, and as what RFC?",
+    a: "December 1995 as RFC 1883",
+    opts: ["December 1995 as RFC 1883","January 1999 as RFC 2246","August 1980 as RFC 768","February 1993 as RFC 1422"]
+  },
+  {
+    article: "AR 9 — IPv6",
+    priority: "high",
+    q: "How many bits does an IPv6 address use, compared to IPv4's 32 bits?",
+    a: "128 bits",
+    opts: ["64 bits","128 bits","256 bits","96 bits"]
+  },
+  {
+    article: "AR 9 — IPv6",
+    priority: "high",
+    q: "How many IP addresses does IPv6 support?",
+    a: "Over 340 undecillion",
+    opts: ["About 4.3 billion","About 340 trillion","Over 340 undecillion","Over 150 sextillion"]
+  },
+  {
+    article: "AR 9 — IPv6",
+    priority: "high",
+    q: "As of late 2025, what fraction of internet users had adopted IPv6?",
+    a: "Less than half",
+    opts: ["More than 75%","Exactly half","Less than half","About two-thirds"]
+  },
+  {
+    article: "AR 9 — IPv6",
+    priority: "high",
+    q: "What workaround did organizations commonly use instead of migrating to IPv6?",
+    a: "Network Address Translation (NAT)",
+    opts: ["Dynamic Host Configuration Protocol (DHCP)","Network Address Translation (NAT)","Carrier-Grade NAT only","Tunneling via 6to4"]
+  },
+  {
+    article: "AR 9 — IPv6",
+    priority: "high",
+    q: "How many IPv6 addresses did Huawei recently seek?",
+    a: "2.56 decillion",
+    opts: ["150 sextillion","2.56 decillion","340 undecillion","4.3 billion"]
+  },
+  {
+    article: "AR 9 — IPv6",
+    priority: "high",
+    q: "What company acquired 150 sextillion IPv6 addresses to push regional adoption past 50%?",
+    a: "Starlink",
+    opts: ["Google","Huawei","Starlink","Cloudflare"]
+  },
+  {
+    article: "AR 9 — IPv6",
+    priority: "high",
+    q: "Why is IPv6 adoption slow despite IPv4 address exhaustion?",
+    a: "IPv6 is not backward-compatible with IPv4",
+    opts: ["IPv6 is slower than IPv4","IPv6 requires new physical hardware","IPv6 is not backward-compatible with IPv4","IPv6 addresses are too complex to allocate"]
+  },
+
+  // ===== AR 10: RFC 768 / UDP (new article — HIGH PRIORITY) =====
+  {
+    article: "AR 10 — UDP / RFC 768",
+    priority: "high",
+    q: "Who defined the User Datagram Protocol (UDP), and in what year?",
+    a: "J. Postel (Jonathan Bruce Postel) in 1980",
+    opts: ["Vint Cerf in 1978","J. Postel (Jonathan Bruce Postel) in 1980","Jack Haverty in 1981","Tim Berners-Lee in 1989"]
+  },
+  {
+    article: "AR 10 — UDP / RFC 768",
+    priority: "high",
+    q: "Which institute did the author of RFC 768 work for?",
+    a: "Information Sciences Institute",
+    opts: ["CERN","ARPANET Research Lab","Information Sciences Institute","Stanford Linear Accelerator Center"]
+  },
+  {
+    article: "AR 10 — UDP / RFC 768",
+    priority: "high",
+    q: "What are the four fields in a UDP datagram?",
+    a: "Source Port, Destination Port, Length, Checksum",
+    opts: ["Source IP, Destination IP, TTL, Checksum","Source Port, Destination Port, Length, Checksum","Sequence Number, Acknowledgment, Window, Checksum","Port, Address, Payload, CRC"]
+  },
+  {
+    article: "AR 10 — UDP / RFC 768",
+    priority: "high",
+    q: "What is the minimum length of a UDP datagram, and why?",
+    a: "8 octets — the header alone (no data)",
+    opts: ["4 octets — minimum payload size","8 octets — the header alone (no data)","16 octets — two ports plus data","12 octets — required checksum overhead"]
+  },
+  {
+    article: "AR 10 — UDP / RFC 768",
+    priority: "high",
+    q: "What is the official protocol number for UDP when used over IP?",
+    a: "17 (or 21 octal)",
+    opts: ["6","17 (or 21 octal)","443","88"]
+  },
+  {
+    article: "AR 10 — UDP / RFC 768",
+    priority: "high",
+    q: "UDP is best described as which type of protocol?",
+    a: "Transaction-oriented with no delivery guarantee",
+    opts: ["Connection-oriented with guaranteed delivery","Transaction-oriented with no delivery guarantee","Stream-based with flow control","Encrypted and session-based"]
+  },
+
+  // ===== AR 12: ARPANET / Jack Haverty (repeated — LOW) =====
+  {
+    article: "AR 12 — ARPANET / Jack Haverty",
+    priority: "low",
+    q: "Which two protocols is ARPANET pioneer Jack Haverty credited with developing?",
+    a: "File Transfer Protocol (FTP) and the RFC format",
+    opts: ["TCP/IP and DNS","File Transfer Protocol (FTP) and the RFC format","HTTP and HTML","SMTP and POP3"]
+  },
+  {
+    article: "AR 12 — ARPANET / Jack Haverty",
+    priority: "low",
+    q: "Under which professor did Jack Haverty work on ARPANET?",
+    a: "Professor JCR Licklider",
+    opts: ["Professor Vint Cerf","Professor Jon Postel","Professor JCR Licklider","Professor Tim Berners-Lee"]
+  },
+  {
+    article: "AR 12 — ARPANET / Jack Haverty",
+    priority: "low",
+    q: "Around what period did the modern internet shift toward reliable 24/7 networking?",
+    a: "End of 1981",
+    opts: ["End of 1969","Mid-1975","End of 1981","Early 1989"]
+  },
+  {
+    article: "AR 12 — ARPANET / Jack Haverty",
+    priority: "low",
+    q: "Who shocked internet developers by declaring TCP was 'done' at a quarterly meeting?",
+    a: "Vint Cerf",
+    opts: ["Jon Postel","Jack Haverty","Vint Cerf","Tim Berners-Lee"]
+  },
+
+  // ===== AR 12: QUIC (new article — HIGH PRIORITY) =====
+  {
+    article: "AR 12 — QUIC",
+    priority: "high",
+    q: "What does QUIC originally stand for?",
+    a: "Quick UDP Internet Connections",
+    opts: ["Quick Unified Internet Control","Quick UDP Internet Connections","Quantum Universal IP Connection","Queued Unicast Internet Channel"]
+  },
+  {
+    article: "AR 12 — QUIC",
+    priority: "high",
+    q: "Which company initially designed and deployed QUIC in 2012?",
+    a: "Google",
+    opts: ["Apple","Cloudflare","Mozilla","Google"]
+  },
+  {
+    article: "AR 12 — QUIC",
+    priority: "high",
+    q: "How does QUIC improve on TCP's connection setup process?",
+    a: "It combines connection and TLS encryption into a single handshake",
+    opts: ["It skips encryption entirely for speed","It uses UDP instead of IP","It combines connection and TLS encryption into a single handshake","It requires no handshake at all"]
+  },
+  {
+    article: "AR 12 — QUIC",
+    priority: "high",
+    q: "What blocking problem does QUIC solve that TCP suffers from?",
+    a: "Head-of-line (HOL) blocking",
+    opts: ["Congestion window collapse","Head-of-line (HOL) blocking","SYN flood vulnerability","ARP poisoning"]
+  },
+  {
+    article: "AR 12 — QUIC",
+    priority: "high",
+    q: "As of late 2024, what percentage of websites globally used HTTP/3 (which relies on QUIC)?",
+    a: "35.9%",
+    opts: ["12.5%","99.9%","35.9%","51.3%"]
+  },
+  {
+    article: "AR 12 — QUIC",
+    priority: "high",
+    q: "Which HTTP version relies on QUIC rather than TCP?",
+    a: "HTTP/3",
+    opts: ["HTTP/1.1","HTTP/2","HTTP/3","HTTPS/2"]
+  },
+  {
+    article: "AR 12 — QUIC",
+    priority: "high",
+    q: "How does QUIC prevent a lost packet in one stream from blocking others?",
+    a: "By utilizing independent streams per connection",
+    opts: ["By retransmitting all packets simultaneously","By utilizing independent streams per connection","By dropping slower streams automatically","By caching packets at the edge server"]
+  },
+
+  // ===== AR 13: Short History of the Web (repeated — LOW) =====
+  {
+    article: "AR 13 — History of the Web",
+    priority: "low",
+    q: "Who invented the World Wide Web, and in what year?",
+    a: "Tim Berners-Lee in 1989",
+    opts: ["Tim Berners-Lee in 1989","Jack Haverty in 1981","Vint Cerf in 1983","Nicola Pellow in 1991"]
+  },
+  {
+    article: "AR 13 — History of the Web",
+    priority: "low",
+    q: "What was the address of the world's first Web server?",
+    a: "info.cern.ch",
+    opts: ["www.cern.ch","info.cern.ch","web.slac.edu","firstsite.arpa.net"]
+  },
+  {
+    article: "AR 13 — History of the Web",
+    priority: "low",
+    q: "Who wrote the early 'line-mode' browser that could run on any system?",
+    a: "Nicola Pellow",
+    opts: ["Tim Berners-Lee","Paul Kunz","Nicola Pellow","Louise Addis"]
+  },
+  {
+    article: "AR 13 — History of the Web",
+    priority: "low",
+    q: "Where was the first US Web server brought online in December 1991?",
+    a: "Stanford Linear Accelerator Center (SLAC)",
+    opts: ["MIT","Stanford Linear Accelerator Center (SLAC)","CERN","UCLA"]
+  },
+  {
+    article: "AR 13 — History of the Web",
+    priority: "low",
+    q: "What type of computer did Tim Berners-Lee use to develop the first Web code?",
+    a: "A NeXT computer",
+    opts: ["An IBM PC","A Sun Workstation","A NeXT computer","An Apple Macintosh"]
+  },
+  {
+    article: "AR 13 — History of the Web",
+    priority: "low",
+    q: "When did CERN release the source code of the WorldWideWeb on a royalty-free basis?",
+    a: "April 1993",
+    opts: ["December 1991","January 1992","April 1993","June 1994"]
+  },
+
+  // ===== AR 13: Tim Berners-Lee / Inrupt (repeated — LOW) =====
+  {
+    article: "AR 13 — Solid / Inrupt",
+    priority: "low",
+    q: "What startup did Tim Berners-Lee launch in 2017 to develop Solid Pods?",
+    a: "Inrupt",
+    opts: ["Decentralize.io","DataPod Inc.","Inrupt","OpenWeb Foundation"]
+  },
+  {
+    article: "AR 13 — Solid / Inrupt",
+    priority: "low",
+    q: "What is a Solid Pod designed to do?",
+    a: "Centrally store user data and control which apps access it",
+    opts: ["Encrypt all browser traffic","Centrally store user data and control which apps access it","Provide a personal VPN tunnel","Host decentralized blockchain transactions"]
+  },
+  {
+    article: "AR 13 — Solid / Inrupt",
+    priority: "low",
+    q: "Which two organizations began testing Inrupt's platform for personal data management?",
+    a: "UK's National Health Service and the Belgian region of Flanders",
+    opts: ["US Department of Health and the EU Commission","UK's National Health Service and the Belgian region of Flanders","CERN and MIT Media Lab","BBC and Netflix"]
+  },
+
+  // ===== AR 13: Berners-Lee 2025 (new — HIGH PRIORITY) =====
+  {
+    article: "AR 13 — Berners-Lee 2025",
+    priority: "high",
+    q: "At which conference did Tim Berners-Lee speak about digital human rights in 2024?",
+    a: "Web Summit in Lisbon",
+    opts: ["Davos World Economic Forum","Web Summit in Lisbon","TED Conference in Vancouver","Internet Governance Forum"]
+  },
+  {
+    article: "AR 13 — Berners-Lee 2025",
+    priority: "high",
+    q: "What does Tim Berners-Lee blame for toxic content on social media?",
+    a: "Algorithms that push polarizing content to maximize clicks",
+    opts: ["Fake accounts and bots","Inadequate government regulation","Algorithms that push polarizing content to maximize clicks","Human users being inherently divisive"]
+  },
+  {
+    article: "AR 13 — Berners-Lee 2025",
+    priority: "high",
+    q: "What does Berners-Lee's 'Solid' project provide to individuals?",
+    a: "A secure digital 'Pod' that acts as a digital ID",
+    opts: ["A private blockchain wallet","End-to-end encrypted email","A secure digital 'Pod' that acts as a digital ID","A decentralized social media profile"]
+  },
+
+  // ===== AR 14: Fastly Outage (repeated — LOW) =====
+  {
+    article: "AR 14 — Fastly Outage",
+    priority: "low",
+    q: "What caused the Fastly outage on June 9, 2021?",
+    a: "A misconfiguration deployed to Fastly's global Points of Presence (POPs)",
+    opts: ["A DDoS attack on Fastly's servers","A misconfiguration deployed to Fastly's global Points of Presence (POPs)","A BGP routing error at a major exchange","A hardware failure at the Frankfurt datacenter"]
+  },
+  {
+    article: "AR 14 — Fastly Outage",
+    priority: "low",
+    q: "According to Kentik, when did Fastly traffic begin reappearing after the June 2021 outage?",
+    a: "6:39 am EDT",
+    opts: ["5:49 am EDT","6:00 am EDT","6:39 am EDT","7:15 am EDT"]
+  },
+  {
+    article: "AR 14 — Fastly Outage",
+    priority: "low",
+    q: "How much worldwide ad revenue did the 2021 Fastly outage cost, according to Kantar?",
+    a: "$29 million",
+    opts: ["$5 million","$29 million","$100 million","$400,000"]
+  },
+
+  // ===== AR 14: Internet Latency / DE-CIX (new — HIGH PRIORITY) =====
+  {
+    article: "AR 14 — Internet Latency / DE-CIX",
+    priority: "high",
+    q: "How many worldwide exchanges does DE-CIX currently operate?",
+    a: "40",
+    opts: ["12","25","40","60"]
+  },
+  {
+    article: "AR 14 — Internet Latency / DE-CIX",
+    priority: "high",
+    q: "At peak, how much data per second does DE-CIX's Frankfurt exchange process?",
+    a: "Over four terabits per second",
+    opts: ["One gigabit per second","One terabit per second","Over four terabits per second","Over 100 terabits per second"]
+  },
+  {
+    article: "AR 14 — Internet Latency / DE-CIX",
+    priority: "high",
+    q: "What maximum latency do applications like self-driving cars and metaverses require?",
+    a: "Below 20 milliseconds",
+    opts: ["Below 65 milliseconds","Below 50 milliseconds","Below 20 milliseconds","Below 5 milliseconds"]
+  },
+  {
+    article: "AR 14 — Internet Latency / DE-CIX",
+    priority: "high",
+    q: "Why does light travel nearly 50% faster through hollow-core fibre than standard fibre?",
+    a: "Light travels faster through air than glass",
+    opts: ["The hollow core uses a vacuum instead of air","Light travels faster through air than glass","The fibre uses photonic crystals to accelerate signals","Less refraction occurs in larger diameter cores"]
+  },
+  {
+    article: "AR 14 — Internet Latency / DE-CIX",
+    priority: "high",
+    q: "Which startup did Microsoft acquire in December 2022 for hollow-core fibre technology?",
+    a: "Lumenisity",
+    opts: ["Fastly","Inrupt","Lumenisity","Cloudflare"]
+  },
+
+  // ===== AR 15: Spotify Scrape / Anna's Archive (new — HIGH PRIORITY) =====
+  {
+    article: "AR 15 — Spotify Scrape",
+    priority: "high",
+    q: "How much music did Anna's Archive scrape from Spotify in late 2025?",
+    a: "Approximately 300 TB",
+    opts: ["86 GB","1 PB","Approximately 300 TB","150 TB"]
+  },
+  {
+    article: "AR 15 — Spotify Scrape",
+    priority: "high",
+    q: "The 86 million scraped files represent what percentage of Spotify's total music?",
+    a: "Roughly 37%",
+    opts: ["99.9%","Roughly 37%","51%","12%"]
+  },
+  {
+    article: "AR 15 — Spotify Scrape",
+    priority: "high",
+    q: "The 86 million scraped files account for what percentage of all user listens on Spotify?",
+    a: "99.9%",
+    opts: ["37%","50%","75%","99.9%"]
+  },
+  {
+    article: "AR 15 — Spotify Scrape",
+    priority: "high",
+    q: "In what format were tracks with a popularity rating above zero preserved?",
+    a: "OGG Vorbis at 160 kbps",
+    opts: ["MP3 at 320 kbps","FLAC lossless","OGG Vorbis at 160 kbps","AAC at 256 kbps"]
+  },
+  {
+    article: "AR 15 — Spotify Scrape",
+    priority: "high",
+    q: "What custom container format did Anna's Archive use for the scraped Spotify data?",
+    a: "Anna's Archive Containers (AAC)",
+    opts: ["Anna's Archive Containers (AAC)","OpenArchive Format (OAF)","Shadow Library Bundle (SLB)","Pirate Archive Standard (PAS)"]
+  },
+  {
+    article: "AR 15 — Spotify Scrape",
+    priority: "high",
+    q: "How many unique ISRCs were included in the JSON reconstruction of Spotify's API?",
+    a: "186 million",
+    opts: ["86 million","150 million","186 million","300 million"]
+  },
+
+  // ===== AR 16: PNPKI (new — HIGH PRIORITY) =====
+  {
+    article: "AR 16 — PNPKI",
+    priority: "high",
+    q: "Which Philippine government agency offers the PNPKI service?",
+    a: "Department of Information and Communications Technology (DICT)",
+    opts: ["Department of Science and Technology (DOST)","Department of Information and Communications Technology (DICT)","National Telecommunications Commission (NTC)","Bangko Sentral ng Pilipinas (BSP)"]
+  },
+  {
+    article: "AR 16 — PNPKI",
+    priority: "high",
+    q: "What minimum key size do Digital Certificates issued by the PNPKI use?",
+    a: "2048-bit",
+    opts: ["128-bit","512-bit","1024-bit","2048-bit"]
+  },
+  {
+    article: "AR 16 — PNPKI",
+    priority: "high",
+    q: "Which two methods does the PNPKI Validation Authority use to check certificate validity?",
+    a: "OCSP and Certificate Revocation List (CRL)",
+    opts: ["LDAP and X.509 Lookup","DNS and WHOIS","OCSP and Certificate Revocation List (CRL)","TLS Handshake and EV Check"]
+  },
+
+  // ===== AR 16: RFC 1422 (repeated — LOW) =====
+  {
+    article: "AR 16 — RFC 1422",
+    priority: "low",
+    q: "Which authentication framework does RFC 1422 conform to?",
+    a: "CCITT 1988 X.509",
+    opts: ["ISO 27001","CCITT 1988 X.509","NIST FIPS 140","RSA PKCS#12"]
+  },
+  {
+    article: "AR 16 — RFC 1422",
+    priority: "low",
+    q: "What is the single root authority for all internet certification in the RFC 1422 architecture?",
+    a: "Internet Policy Registration Authority (IPRA)",
+    opts: ["Internet Assigned Numbers Authority (IANA)","Certificate Authority Browser Forum","Internet Policy Registration Authority (IPRA)","Root Certificate Authority (RCA)"]
+  },
+  {
+    article: "AR 16 — RFC 1422",
+    priority: "low",
+    q: "How many specific elements must a public-key certificate contain under RFC 1422?",
+    a: "Seven",
+    opts: ["Four","Five","Six","Seven"]
+  },
+  {
+    article: "AR 16 — RFC 1422",
+    priority: "low",
+    q: "What 4-tuple does the IPRA database use to prevent duplicate distinguished names?",
+    a: "CA DN hash, subjectPublicKey, PCA DN, timestamp",
+    opts: ["Issuer name, serial number, validity, subject name","CA DN hash, subjectPublicKey, PCA DN, timestamp","Country, Organization, OU, CN","Subject key ID, authority key ID, CRL number, expiry"]
+  },
+
+  // ===== AR 17: Entrust / Cloudflare (new — HIGH PRIORITY) =====
+  {
+    article: "AR 17 — Entrust / Cloudflare",
+    priority: "high",
+    q: "Why did Chrome and Mozilla elect to distrust Entrust's public TLS certificates?",
+    a: "Ongoing compliance failures by Entrust",
+    opts: ["Entrust was acquired by a sanctioned entity","Ongoing compliance failures by Entrust","Entrust's root key was compromised","Entrust raised certificate prices above market rates"]
+  },
+  {
+    article: "AR 17 — Entrust / Cloudflare",
+    priority: "high",
+    q: "From what date did Chrome distrust Entrust certificates?",
+    a: "November 12, 2024",
+    opts: ["October 1, 2024","November 12, 2024","December 1, 2024","January 1, 2025"]
+  },
+  {
+    article: "AR 17 — Entrust / Cloudflare",
+    priority: "high",
+    q: "Which CA did Entrust partner with to continue issuing trusted certificates?",
+    a: "SSL.com",
+    opts: ["DigiCert","Let's Encrypt","Sectigo","SSL.com"]
+  },
+  {
+    article: "AR 17 — Entrust / Cloudflare",
+    priority: "high",
+    q: "What is the default certificate validity period Cloudflare uses for its Advanced Certificate Manager after the Entrust change?",
+    a: "90 days",
+    opts: ["1 year","2 years","90 days","180 days"]
+  },
+
+  // ===== AR 17: SSL/TLS History (new — HIGH PRIORITY) =====
+  {
+    article: "AR 17 — SSL/TLS History",
+    priority: "high",
+    q: "Why was SSL version 1.0 never released publicly?",
+    a: "It was so flawed it was never made public",
+    opts: ["Netscape was acquired before its release","It was classified as a military technology","It was so flawed it was never made public","It was immediately superseded by SSL 2.0 at the same time"]
+  },
+  {
+    article: "AR 17 — SSL/TLS History",
+    priority: "high",
+    q: "What was the first public SSL release, and in which product did it ship?",
+    a: "SSL 2.0 in Netscape Navigator 1.1",
+    opts: ["SSL 1.0 in Netscape Navigator 1.0","SSL 2.0 in Netscape Navigator 1.1","SSL 3.0 in Internet Explorer 3.0","TLS 1.0 in Netscape Navigator 2.0"]
+  },
+  {
+    article: "AR 17 — SSL/TLS History",
+    priority: "high",
+    q: "Which vulnerability led to SSL 3.0 being deprecated in 2014?",
+    a: "POODLE",
+    opts: ["BEAST","HEARTBLEED","POODLE","FREAK"]
+  },
+  {
+    article: "AR 17 — SSL/TLS History",
+    priority: "high",
+    q: "Which RFC defines TLS 1.0, and in what year was it launched?",
+    a: "RFC 2246, January 1999",
+    opts: ["RFC 1422, February 1993","RFC 5246, August 2008","RFC 8446, August 2018","RFC 2246, January 1999"]
+  },
+  {
+    article: "AR 17 — SSL/TLS History",
+    priority: "high",
+    q: "As of May 2024, what percentage of SSL/TLS-enabled sites support TLS 1.2?",
+    a: "99.9%",
+    opts: ["35.9%","51%","99.9%","75%"]
+  },
+  {
+    article: "AR 17 — SSL/TLS History",
+    priority: "high",
+    q: "What key improvement did TLS 1.3 mandate regarding forward secrecy?",
+    a: "Perfect forward secrecy via ephemeral keys",
+    opts: ["Perfect forward secrecy via ephemeral keys","Static RSA key exchange for compatibility","256-bit AES-only cipher suites","Certificate pinning by default"]
+  },
+  {
+    article: "AR 17 — SSL/TLS History",
+    priority: "high",
+    q: "How many round trips does a TLS 1.3 full handshake require?",
+    a: "1-RTT (or 0-RTT for session resumption)",
+    opts: ["3-RTT","2-RTT","1-RTT (or 0-RTT for session resumption)","No handshake required"]
+  },
+  {
+    article: "AR 17 — SSL/TLS History",
+    priority: "high",
+    q: "Which post-quantum algorithm was NIST moving forward with in its March 2025 status report?",
+    a: "HQC",
+    opts: ["Kyber","NTRU","HQC","CRYSTALS-Dilithium"]
+  },
+  {
+    article: "AR 17 — SSL/TLS History",
+    priority: "high",
+    q: "What key exchange method does Cloudflare report over a third of its human web traffic using alongside TLS 1.3 as of March 2025?",
+    a: "Hybrid ML-KEM post-quantum key exchange",
+    opts: ["Classical ECDH only","RSA-4096 key exchange","Hybrid ML-KEM post-quantum key exchange","X25519 Kyber hybrid"]
+  },
+  {
+    article: "AR 17 — SSL/TLS History",
+    priority: "high",
+    q: "To whom did TLS protocol development transfer from Netscape when TLS 1.0 was created?",
+    a: "The Internet Engineering Task Force (IETF)",
+    opts: ["ISO/IEC","W3C","The Internet Engineering Task Force (IETF)","NIST"]
+  },
+
+  // ===== AR 18: Operation Alice (new — HIGH PRIORITY) =====
+  {
+    article: "AR 18 — Operation Alice",
+    priority: "high",
+    q: "When did 'Operation Alice' launch, and how many countries were involved?",
+    a: "March 9, 2026, involving law enforcement from 23 countries",
+    opts: ["June 9, 2021, involving 15 countries","March 9, 2026, involving law enforcement from 23 countries","January 1, 2025, involving 50 countries","November 2025, involving 10 countries"]
+  },
+  {
+    article: "AR 18 — Operation Alice",
+    priority: "high",
+    q: "What was the name of the dark web platform that triggered the initial investigation in mid-2021?",
+    a: "Alice with Violence CP",
+    opts: ["AlphaBay","Alice with Violence CP","Silk Road 3.0","Shadow Market"]
+  },
+  {
+    article: "AR 18 — Operation Alice",
+    priority: "high",
+    q: "How many dark web websites were shut down in Operation Alice?",
+    a: "Over 373,000 .onion domains",
+    opts: ["10,000","50,000","Over 373,000 .onion domains","1,000,000"]
+  },
+  {
+    article: "AR 18 — Operation Alice",
+    priority: "high",
+    q: "How many servers were seized in Operation Alice, and where was the majority located?",
+    a: "105 servers, majority in Germany",
+    opts: ["440 servers, majority in China","10 servers, majority in the US","105 servers, majority in Germany","86 servers, majority in the Netherlands"]
+  },
+  {
+    article: "AR 18 — Operation Alice",
+    priority: "high",
+    q: "Why does Europol prefer 'CSAM' over 'child pornography'?",
+    a: "The latter term falsely implies the victim's consent and legality",
+    opts: ["CSAM is a legally mandated acronym in the EU","The latter term falsely implies the victim's consent and legality","CSAM is shorter and easier to report","'Child pornography' is trademarked by a legal body"]
+  },
+  {
+    article: "AR 18 — Operation Alice",
+    priority: "high",
+    q: "What digital support platform did Europol launch in November 2025?",
+    a: "Help4U",
+    opts: ["SafeNet","CyberShield","Help4U","StopAbuse Portal"]
+  },
+  {
+    article: "AR 18 — Operation Alice",
+    priority: "high",
+    q: "What payment method did the fraudulent dark web sites use to collect payment?",
+    a: "Bitcoin",
+    opts: ["Monero","Ethereum","Bitcoin","Litecoin"]
+  },
+  {
+    article: "AR 18 — Operation Alice",
+    priority: "high",
+    q: "What range were fraudulent CSAM packages priced at on the dark web network?",
+    a: "EUR 17 to EUR 215",
+    opts: ["EUR 5 to EUR 50","EUR 17 to EUR 215","EUR 100 to EUR 1000","EUR 1 to EUR 10"]
+  },
+  {
+    article: "AR 18 — Man Used 373K Sites",
+    priority: "high",
+    q: "What is the nationality and status of the main suspect in the Operation Alice dark web scam?",
+    a: "A 35-year-old Chinese citizen; at large with an international arrest warrant",
+    opts: ["A 40-year-old German national; already arrested","A 35-year-old Chinese citizen; at large with an international arrest warrant","A 28-year-old US citizen; extradited","A 50-year-old Russian national; detained"]
+  },
+  {
+    article: "AR 18 — Man Used 373K Sites",
+    priority: "high",
+    q: "How much profit did the Operation Alice scammer make, and from how many transactions?",
+    a: "~$400,000 (18 Bitcoin) from ~10,000 transactions",
+    opts: ["~$29 million from ~1 million transactions","~$400,000 (18 Bitcoin) from ~10,000 transactions","~$1 million from ~440 transactions","~$5 million from ~50,000 transactions"]
+  },
+  {
+    article: "AR 18 — Man Used 373K Sites",
+    priority: "high",
+    q: "Since when had the Operation Alice suspect's dark web operation been active?",
+    a: "October 2019",
+    opts: ["January 2018","October 2019","Mid-2021","March 2026"]
+  },
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let selectedCount = 0; // 0 = max
+let shuffleEnabled = true;
+let activeQuestions = [];
+let currentIdx = 0;
+let score = 0;
+let wrongCount = 0;
+let answered = false;
+let userAnswers = [];
+
+// ============================================================
+// INIT
+// ============================================================
+window.onload = function() {
+  const total = ALL_QUESTIONS.length;
+  const high = ALL_QUESTIONS.filter(q => q.priority === 'high').length;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-high').textContent = high;
+  document.getElementById('max-num').textContent = total;
+  selectPreset(0);
+};
+
+function selectPreset(n) {
+  selectedCount = n;
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.count) === n);
+  });
+}
+
+function handleGlobalShuffle() {
+  shuffleEnabled = !shuffleEnabled;
+  const btn = document.getElementById('global-shuffle-btn');
+  btn.style.color = shuffleEnabled ? 'var(--accent)' : '';
+  btn.style.borderColor = shuffleEnabled ? 'rgba(79,142,247,0.4)' : '';
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function buildPool(n) {
+  // Weighted: high priority items have 3x chance to appear vs low
+  const high = ALL_QUESTIONS.filter(q => q.priority === 'high');
+  const low = ALL_QUESTIONS.filter(q => q.priority === 'low');
+
+  let pool;
+  if (n === 0 || n >= ALL_QUESTIONS.length) {
+    pool = [...ALL_QUESTIONS];
+  } else {
+    // Fill with weighted random selection
+    const weighted = [...high, ...high, ...high, ...low];
+    const seen = new Set();
+    pool = [];
+    const shuffledWeighted = shuffle([...weighted]);
+    for (const q of shuffledWeighted) {
+      const key = q.q;
+      if (!seen.has(key)) { seen.add(key); pool.push(q); }
+      if (pool.length >= n) break;
+    }
+    // If not enough, fill remainder with low-priority
+    if (pool.length < n) {
+      for (const q of low) {
+        if (!seen.has(q.q)) { seen.add(q.q); pool.push(q); }
+        if (pool.length >= n) break;
+      }
+    }
+  }
+
+  if (shuffleEnabled) shuffle(pool);
+  return pool;
+}
+
+function startQuiz() {
+  activeQuestions = buildPool(selectedCount);
+  currentIdx = 0;
+  score = 0;
+  wrongCount = 0;
+  userAnswers = [];
+
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+
+  loadQuestion();
+}
+
+function loadQuestion() {
+  answered = false;
+  const q = activeQuestions[currentIdx];
+  const total = activeQuestions.length;
+
+  // Update progress
+  document.getElementById('q-counter').textContent = `Question ${currentIdx + 1} of ${total}`;
+  document.getElementById('q-article').textContent = q.article;
+  document.getElementById('progress-fill').style.width = `${(currentIdx / total) * 100}%`;
+  document.getElementById('q-num-label').textContent = `QUESTION ${String(currentIdx + 1).padStart(2, '0')}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('live-correct').textContent = score;
+  document.getElementById('live-wrong').textContent = wrongCount;
+
+  // Article tag
+  const tagWrap = document.getElementById('article-tag-wrap');
+  tagWrap.innerHTML = `<div class="article-tag"><span class="priority-dot ${q.priority === 'high' ? 'high' : ''}"></span>${q.article}</div>`;
+
+  // Feedback
+  const fb = document.getElementById('feedback-bar');
+  fb.className = 'feedback-bar';
+
+  // Hide nav buttons
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('finish-btn').style.display = 'none';
+
+  // Build options
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  const labels = ['A','B','C','D'];
+  const opts = shuffleEnabled ? shuffle([...q.opts]) : q.opts;
+
+  opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-label">${labels[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(opt, q.a, q);
+    grid.appendChild(btn);
+  });
+}
+
+function selectAnswer(chosen, correct, q) {
+  if (answered) return;
+  answered = true;
+
+  const isCorrect = chosen === correct;
+  if (isCorrect) score++; else wrongCount++;
+
+  userAnswers.push({ q: q.q, chosen, correct, isCorrect });
+
+  // Update live score
+  document.getElementById('live-correct').textContent = score;
+  document.getElementById('live-wrong').textContent = wrongCount;
+
+  // Style buttons
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(btn => {
+    btn.disabled = true;
+    const btnText = btn.querySelector('span:last-child').textContent;
+    if (btnText === correct) {
+      btn.classList.add(isCorrect ? 'correct' : 'reveal');
+    }
+    if (btnText === chosen && !isCorrect) {
+      btn.classList.add('wrong');
+    }
+  });
+
+  // Show feedback
+  const fb = document.getElementById('feedback-bar');
+  const fbTitle = document.getElementById('feedback-title');
+  const fbDetail = document.getElementById('feedback-detail');
+  const fbIcon = document.getElementById('feedback-icon');
+
+  if (isCorrect) {
+    fb.className = 'feedback-bar show correct-fb';
+    fbIcon.textContent = '✓';
+    fbTitle.textContent = 'Correct!';
+    fbDetail.textContent = chosen;
+  } else {
+    fb.className = 'feedback-bar show wrong-fb';
+    fbIcon.textContent = '✗';
+    fbTitle.textContent = 'Incorrect.';
+    fbDetail.textContent = `Correct answer: ${correct}`;
+  }
+
+  // Nav
+  const isLast = currentIdx === activeQuestions.length - 1;
+  if (isLast) {
+    document.getElementById('finish-btn').style.display = 'inline-block';
+  } else {
+    document.getElementById('next-btn').style.display = 'inline-block';
+  }
+}
+
+function nextQuestion() {
+  currentIdx++;
+  loadQuestion();
+}
+
+function showResults() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'block';
+
+  const total = activeQuestions.length;
+  const pct = Math.round((score / total) * 100);
+
+  document.getElementById('res-pct').textContent = `${pct}%`;
+  document.getElementById('res-correct').textContent = score;
+  document.getElementById('res-wrong').textContent = wrongCount;
+  document.getElementById('res-total-q').textContent = total;
+
+  // Score ring CSS
+  document.getElementById('score-ring').style.setProperty('--pct', `${pct}%`);
+
+  // Title
+  let title, sub;
+  if (pct >= 90) { title = 'Excellent!'; sub = 'You clearly know your networking.'; }
+  else if (pct >= 70) { title = 'Good Job!'; sub = 'Solid understanding with room to improve.'; }
+  else if (pct >= 50) { title = 'Halfway There'; sub = 'Review the articles you struggled with.'; }
+  else { title = 'Keep Studying'; sub = 'Go back and re-read the highlighted articles.'; }
+
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-subtitle').textContent = sub;
+
+  // Review
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  userAnswers.forEach(a => {
+    const div = document.createElement('div');
+    div.className = `review-item ${a.isCorrect ? 'r-correct' : 'r-wrong'}`;
+    div.innerHTML = `<div class="review-q">${a.q}</div>`
+      + (a.isCorrect
+        ? `<div class="review-ans">✓ ${a.correct}</div>`
+        : `<div class="review-your">✗ Your answer: ${a.chosen}</div><div class="review-ans">✓ Correct: ${a.correct}</div>`);
+    list.appendChild(div);
+  });
+}
+
+function retakeQuiz() {
+  startQuiz();
+}
+
+function exitToSetup() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('setup-screen').style.display = 'block';
+}
+</script>
+</body>
+</html>
