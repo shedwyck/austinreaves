@@ -636,6 +636,44 @@
   }
   .shuffle-btn:hover { border-color: var(--border2); color: var(--text); }
   .shuffle-icon { font-size: 14px; }
+
+  /* RESUME BANNER */
+  .resume-banner {
+    display: none;
+    background: rgba(245,166,35,0.08);
+    border: 1px solid rgba(245,166,35,0.25);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .resume-banner.show { display: flex; }
+  .resume-info { flex: 1; }
+  .resume-info strong { display: block; font-size: 14px; color: var(--gold); margin-bottom: 2px; }
+  .resume-info span { font-size: 12px; color: var(--text2); }
+  .resume-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .resume-btn {
+    background: rgba(245,166,35,0.15);
+    border: 1px solid rgba(245,166,35,0.35);
+    border-radius: var(--radius-sm);
+    color: var(--gold);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: all 0.16s;
+  }
+  .resume-btn:hover { background: rgba(245,166,35,0.25); }
+  .resume-btn.dismiss {
+    background: var(--bg3);
+    border-color: var(--border);
+    color: var(--text2);
+  }
+  .resume-btn.dismiss:hover { border-color: var(--border2); color: var(--text); }
 </style>
 </head>
 <body>
@@ -685,6 +723,18 @@
     <div class="stat-chip"><div class="n" id="stat-total">—</div><div class="l">total questions</div></div>
     <div class="stat-chip"><div class="n" id="stat-articles">10</div><div class="l">articles covered</div></div>
     <div class="stat-chip"><div class="n" id="stat-high">—</div><div class="l">high priority</div></div>
+  </div>
+
+  <!-- RESUME BANNER -->
+  <div class="resume-banner" id="resume-banner">
+    <div class="resume-info">
+      <strong id="resume-label">Quiz in progress</strong>
+      <span id="resume-detail">You have a saved quiz session. Pick up where you left off?</span>
+    </div>
+    <div class="resume-actions">
+      <button class="resume-btn" onclick="resumeQuiz()">Resume Quiz</button>
+      <button class="resume-btn dismiss" onclick="dismissResume()">Start Fresh</button>
+    </div>
   </div>
 
   <br>
@@ -1418,6 +1468,110 @@ let answered = false;
 let userAnswers = [];
 
 // ============================================================
+// LOCALSTORAGE — progress persistence
+// ============================================================
+function saveProgress() {
+  const data = {
+    selectedCount,
+    shuffleEnabled,
+    questionIndices: activeQuestions.map(q => ALL_QUESTIONS.findIndex(aq => aq.q === q.q)),
+    currentIdx,
+    score,
+    wrongCount,
+    answered,
+    userAnswers,
+    savedAt: Date.now()
+  };
+  localStorage.setItem('quizProgress', JSON.stringify(data));
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem('quizProgress');
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data.questionIndices) || typeof data.currentIdx !== 'number') return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function clearProgress() {
+  localStorage.removeItem('quizProgress');
+}
+
+function restoreAnswerState() {
+  const lastAnswer = userAnswers[userAnswers.length - 1];
+  if (!lastAnswer) return;
+
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(btn => {
+    btn.disabled = true;
+    const btnText = btn.querySelector('span:last-child').textContent;
+    if (btnText === lastAnswer.correct) {
+      btn.classList.add(lastAnswer.isCorrect ? 'correct' : 'reveal');
+    }
+    if (btnText === lastAnswer.chosen && !lastAnswer.isCorrect) {
+      btn.classList.add('wrong');
+    }
+  });
+
+  const fb = document.getElementById('feedback-bar');
+  const fbTitle = document.getElementById('feedback-title');
+  const fbDetail = document.getElementById('feedback-detail');
+  const fbIcon = document.getElementById('feedback-icon');
+
+  if (lastAnswer.isCorrect) {
+    fb.className = 'feedback-bar show correct-fb';
+    fbIcon.textContent = '\u2713';
+    fbTitle.textContent = 'Correct!';
+    fbDetail.textContent = lastAnswer.correct;
+  } else {
+    fb.className = 'feedback-bar show wrong-fb';
+    fbIcon.textContent = '\u2717';
+    fbTitle.textContent = 'Incorrect.';
+    fbDetail.textContent = 'Correct answer: ' + lastAnswer.correct;
+  }
+
+  const isLast = currentIdx === activeQuestions.length - 1;
+  document.getElementById(isLast ? 'finish-btn' : 'next-btn').style.display = 'inline-block';
+}
+
+function resumeQuiz() {
+  const data = loadProgress();
+  if (!data) return;
+
+  activeQuestions = data.questionIndices.map(idx => ALL_QUESTIONS[idx]).filter(Boolean);
+  if (activeQuestions.length === 0) return;
+
+  selectedCount = data.selectedCount;
+  shuffleEnabled = data.shuffleEnabled;
+  currentIdx = data.currentIdx;
+  score = data.score;
+  wrongCount = data.wrongCount;
+  answered = data.answered;
+  userAnswers = data.userAnswers;
+
+  clearProgress();
+
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+
+  loadQuestion();
+
+  if (answered) {
+    restoreAnswerState();
+  }
+}
+
+function dismissResume() {
+  clearProgress();
+  document.getElementById('resume-banner').classList.remove('show');
+}
+
+// ============================================================
 // INIT
 // ============================================================
 window.onload = function() {
@@ -1427,6 +1581,18 @@ window.onload = function() {
   document.getElementById('stat-high').textContent = high;
   document.getElementById('max-num').textContent = total;
   selectPreset(0);
+
+  // Check for saved progress
+  const saved = loadProgress();
+  if (saved) {
+    const banner = document.getElementById('resume-banner');
+    const detail = document.getElementById('resume-detail');
+    const when = new Date(saved.savedAt);
+    const totalQ = saved.questionIndices.length;
+    const answered = saved.userAnswers.length;
+    detail.textContent = `Question ${saved.currentIdx + 1} of ${totalQ} (${answered} answered) \u2014 saved ${when.toLocaleString()}`;
+    banner.classList.add('show');
+  }
 };
 
 function selectPreset(n) {
@@ -1484,6 +1650,7 @@ function buildPool(n) {
 }
 
 function startQuiz() {
+  clearProgress();
   activeQuestions = buildPool(selectedCount);
   currentIdx = 0;
   score = 0;
@@ -1495,6 +1662,7 @@ function startQuiz() {
   document.getElementById('quiz-screen').style.display = 'block';
 
   loadQuestion();
+  saveProgress();
 }
 
 function loadQuestion() {
@@ -1589,14 +1757,18 @@ function selectAnswer(chosen, correct, q) {
   } else {
     document.getElementById('next-btn').style.display = 'inline-block';
   }
+
+  saveProgress();
 }
 
 function nextQuestion() {
   currentIdx++;
   loadQuestion();
+  saveProgress();
 }
 
 function showResults() {
+  clearProgress();
   document.getElementById('quiz-screen').style.display = 'none';
   document.getElementById('results-screen').style.display = 'block';
 
@@ -1640,6 +1812,7 @@ function retakeQuiz() {
 }
 
 function exitToSetup() {
+  clearProgress();
   document.getElementById('quiz-screen').style.display = 'none';
   document.getElementById('results-screen').style.display = 'none';
   document.getElementById('setup-screen').style.display = 'block';
